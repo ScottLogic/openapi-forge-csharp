@@ -28,14 +28,13 @@ namespace Features
         }
 
         [Then(@"the request should have a header property with value (.+)")]
-        public Task CheckHeaderPropertyAsync(string headerProperty)
+        public void CheckHeaderPropertyAsync(string headerProperty)
         {
             Assert.NotNull(_request);
             IEnumerable<string> keys = null;
             if (!_request.Headers.TryGetValues("test", out keys))
                 Assert.True(false, "No test parameter found");
             Assert.Equal(headerProperty, keys.First());
-            return Task.CompletedTask;
         }
     }
 }
