@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using Gherkin.Ast;
-using RichardSzalay.MockHttp;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 using Xunit.Gherkin.Quick;
 
