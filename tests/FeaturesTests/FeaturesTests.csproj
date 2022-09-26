@@ -26,7 +26,7 @@
 
     <!-- Copy Feature files into build dir so  Xunit.Gherkin.Quick can discover them-->
     <ItemGroup>
-        <FeatureFiles Include="$(ProjectDir){{FEATURE_PATH}}" />
+        <FeatureFiles Include="{{FEATURE_PATH}}" />
     </ItemGroup>
     <Target Name="PreBuild" AfterTargets="PreBuildEvent">
         <Copy SourceFiles="@(FeatureFiles)" DestinationFolder="$(TargetDir)" />
