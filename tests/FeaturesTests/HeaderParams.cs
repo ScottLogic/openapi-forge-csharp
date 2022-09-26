@@ -33,7 +33,7 @@ namespace Features
             Assert.NotNull(_request);
             IEnumerable<string> keys = null;
             if (!_request.Headers.TryGetValues("test", out keys))
-                Assert.True(false, "no test parameter found");
+                Assert.True(false, "No test parameter found");
             Assert.Equal(headerProperty, keys.First());
             return Task.CompletedTask;
         }
