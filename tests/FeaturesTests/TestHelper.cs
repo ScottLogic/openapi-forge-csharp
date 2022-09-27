@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Features
@@ -48,7 +49,7 @@ namespace Features
 
         private void ForgeApi()
         {
-            RunCmdPropmt($"openapi-forge forge {_schemaFilePath} {Constants.TemplateProjectPath} -o {_outputPath} -s");
+            RunCmdPrompt($"openapi-forge forge {_schemaFilePath} {Constants.TemplateProjectPath} -o {_outputPath} -s");
         }
 
         private void GetApiClientTypes()
@@ -86,7 +87,7 @@ namespace Features
 
         private void CompileCode()
         {
-            RunCmdPropmt($"dotnet build {_outputPath}/Api{_testId}.csproj -o {_outputPath}/bin");
+            RunCmdPrompt($"dotnet build {_outputPath}/Api{_testId}.csproj -o {_outputPath}/bin");
         }
 
         public object CreateApiClient(HttpClient client, int? serverIndex = null)
@@ -128,16 +129,24 @@ namespace Features
             _generatedAssembly = null;
         }
 
-        private static void RunCmdPropmt(string commandText)
+        private static void RunCmdPrompt(string commandText)
         {
+            var command = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? "cmd.exe"
+                : commandText.Substring(0, commandText.IndexOf(' '));
+                
+            var commandParams = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? $"/C {commandText}"
+                : commandText.Substring(commandText.IndexOf(' ') + 1);
+
             using var cmd = new Process();
-            cmd.StartInfo.FileName = "cmd.exe";
+            cmd.StartInfo.FileName = command;
             cmd.StartInfo.RedirectStandardInput = true;
             cmd.StartInfo.RedirectStandardOutput = true;
             cmd.StartInfo.RedirectStandardError = true;
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = false;
-            cmd.StartInfo.Arguments = $"/C {commandText}";
+            cmd.StartInfo.Arguments = commandParams;
             cmd.Start();
             cmd.WaitForExit(1000);
 
