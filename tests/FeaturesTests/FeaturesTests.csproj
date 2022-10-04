@@ -26,7 +26,7 @@
 
     <!-- Copy Feature files into build dir so  Xunit.Gherkin.Quick can discover them-->
     <ItemGroup>
-        <FeatureFiles Include="{{FEATURE_PATH}}" />
+        <FeatureFiles Include="../../node_modules/openapi-forge/features/*.feature" />
     </ItemGroup>
     <Target Name="PreBuild" AfterTargets="PreBuildEvent">
         <Copy SourceFiles="@(FeatureFiles)" DestinationFolder="$(TargetDir)" />

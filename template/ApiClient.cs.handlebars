@@ -54,7 +54,7 @@ using System.Threading.Tasks;
         {
            throw new NotImplementedException("Operation '{{operationId}}' most likely does not support json encoded requests which are not supported by openapi forge.");
         }        
-        {{/eitherIsTrue}}
+        {{/if}}
       {{/each}}  
       {{/each}}
     }
