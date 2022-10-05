@@ -1,12 +1,13 @@
 const supportedTypes = ["application/json", "text/plain"];
+const arrayCount = supportedTypes.length - 1;
 
 const pathContentTypeSupported = (path) => {
-    for (let i = 0; i < supportedTypes.length - 1; i++) {
+    for (let i = 0; i <= arrayCount; i++) {
         if (path.requestBody) {
             if (path.requestBody.content) {
                 if (path.requestBody.content[supportedTypes[i]]) {
                     return true;
-                } else if (i === supportedTypes.length - 1) {
+                } else if (i === arrayCount) {
                     return false;
                 } else {
                     continue;
@@ -28,7 +29,7 @@ const pathContentTypeSupported = (path) => {
                 return true;
             }
 
-            if (i === supportedTypes.length - 1) {
+            if (i === arrayCount) {
                 return false;
             } else {
                 continue;
