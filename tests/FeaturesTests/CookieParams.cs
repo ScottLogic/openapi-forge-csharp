@@ -24,7 +24,7 @@ namespace Features
             await CallMethod(methodName, parameters);
         }
 
-        [Then(@"the request should have a cookie property with value (.+)")]
+        [Then(@"the request header should have a cookie property with value (.+)")]
         public void CheckCookiePropertyAsync(string headerProperty)
         {
             Assert.NotNull(_request);
