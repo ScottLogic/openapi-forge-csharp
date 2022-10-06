@@ -8,15 +8,11 @@ const createHeaderParamsSnippet = (sortedParams) => {
     //Add cookie parameters
     const cookieParams = getParametersByType(sortedParams, "cookie");
      if (cookieParams.length !== 0) {
-         let counter = 0;
-         headerSnippet += 'request.Headers.Add("cookie", $"';
+        let safeParamName = toParamName(cookieParams[0].name);
+         headerSnippet += `request.Headers.Add("cookie", $"${cookieParams[0].name}={${safeParamName}}`;
          for (const cookieParam of cookieParams) {
-             counter += 1;
-             const safeParamName = toParamName(cookieParam.name);
-             headerSnippet += `${cookieParam.name}={${safeParamName}}`;
-             if (counter !== cookieParams.length) {
-                 headerSnippet += ";";
-             }
+            safeParamName = toParamName(cookieParam.name);
+            headerSnippet += `;${cookieParam.name}={${safeParamName}}`;
          }
          headerSnippet += "\");\n";
     }
