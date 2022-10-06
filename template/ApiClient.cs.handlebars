@@ -28,7 +28,7 @@ using System.Threading.Tasks;
       {{#each paths}}
       {{setVar "path" @key}}
       {{#each this}}
-      {{#if (pathContentTypeSupported this)}}
+      {{#if (pathSupportsJson this)}}
         public async Task{{#if _response.schema}}<{{safeTypeConvert _response.schema}}>{{/if}} {{operationId}}({{#each _sortedParameters}}{{nullableTypeConvert schema _optional}} {{toParamName name}}{{#if (hasDefault schema.default)}} = {{{quoteIfString schema.default}}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}})
         {
           {{createQueryStringSnippet _sortedParameters}}
