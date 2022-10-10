@@ -23,8 +23,12 @@
   },
   "homepage": "https://github.com/murcikan-scottlogic/openapi-forge-csharp#readme",
   "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
     "handlebars": "^4.7.7",
+    "husky": "^8.0.1",
     "openapi-forge": "github:scottlogic/openapi-forge#6be3962bc263948237f71689b2df7ba73e116a55",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "semantic-release": "^19.0.5"
   }
 }
