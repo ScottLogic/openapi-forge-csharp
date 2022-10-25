@@ -1,10 +1,20 @@
-function parse(resultLine) {
+function parse(results) {
+  const length = results.length;
+  const failLineRegex = /\s+Failed.*::\s(.*)\s\[\d+\s\w+\].*/;
+  let failures = [];
+  let rr;
+  for (let xx = 0; xx < length; xx++) {
+    if((rr = results[xx].match(failLineRegex))) failures.push(rr[1]);
+  }
+
+  let result = {};
+  result.failures = failures;
+
   // Extract the results of the testing from stdout. In stdout is a count of tests and their outcomes. Also included is the test duration.
-  const resultMatch = resultLine.match(
+  const resultMatch = results[length - 2].match(
     /Failed:\s+(\d+),\sPassed:\s+(\d+),\sSkipped:\s+(\d+),\sTotal:\s+(\d+),\sDuration:\s+(.*)\s-\sFeaturesTests.dll\s\(net6\.0\)/
   );
 
-  let result;
   if (resultMatch) {
     result = {
       scenarios: parseInt(resultMatch[4]),
