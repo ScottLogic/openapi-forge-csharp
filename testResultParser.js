@@ -4,7 +4,7 @@ function parse(results) {
   let failures = [];
   let rr;
   for (let xx = 0; xx < length; xx++) {
-    if((rr = results[xx].match(failLineRegex))) failures.push(rr[1]);
+    if ((rr = results[xx].match(failLineRegex))) failures.push(rr[1]);
   }
 
   let result = {};
