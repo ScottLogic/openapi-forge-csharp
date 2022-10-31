@@ -49,7 +49,7 @@ namespace Features
 
         private void ForgeApi()
         {
-            RunCmdPrompt($"openapi-forge forge {_schemaFilePath} {Constants.TemplateProjectPath} -o {_outputPath} -s");
+            RunCmdPrompt($"openapi-forge forge {_schemaFilePath} {Constants.TemplateProjectPath} -o {_outputPath}");
         }
 
         private void GetApiClientTypes()
@@ -131,13 +131,14 @@ namespace Features
 
         private static void RunCmdPrompt(string commandText)
         {
+
             var command = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? "cmd.exe"
-                : commandText.Substring(0, commandText.IndexOf(' '));
-                
+            ? "cmd.exe"
+            : commandText.Substring(0, commandText.IndexOf(' '));
+
             var commandParams = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? $"/C {commandText}"
-                : commandText.Substring(commandText.IndexOf(' ') + 1);
+            ? $"/C {commandText}"
+            : commandText.Substring(commandText.IndexOf(' ') + 1);
 
             using var cmd = new Process();
             cmd.StartInfo.FileName = command;

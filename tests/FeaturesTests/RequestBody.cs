@@ -15,7 +15,7 @@ namespace Features
         }
 
 
-        [When(@"calling the method (\w+) with (?:object|array|parameters) ""(.+)""")]
+        [When(@"calling the method (\w+) with (?:object|array|parameters) (.+)")]
         public async Task CallMethodWithStringParameters(string methodName, string parametersString)
         {
             var inlineObj = _testHelper.JsonToTypeInstance("ObjectResponse", parametersString);
@@ -23,13 +23,12 @@ namespace Features
             await CallMethod(methodName, new object[] { inlineObj });
         }
 
-        [And(@"the request should have a body with value ""(.+)""")]
+        [And(@"the request should have a body with value (.+)")]
         public async Task CheckRequestBody(string propValue)
         {
             Assert.NotNull(_request);
             var body = await _request.Content.ReadAsStringAsync();
             Assert.NotNull(body);
-            body = body.Replace("\"", "'");
             Assert.Equal(propValue, body);
         }
     }

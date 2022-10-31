@@ -34,21 +34,20 @@ namespace Features
             Assert.Equal(propValue, propInfo.GetValue(_actual).ToString());
         }
 
-        [When(@"calling the method (\w+) with (?:object|array|parameters) ""(.+)""")]
-        public async Task CallMethodWithParameters(string methodName, string jsonTextObect)
+        [When(@"calling the method (\w+) with (?:object|array|parameters) (.+)")]
+        public async Task CallMethodWithParameters(string methodName, string jsonTextObject)
         {
-            var inlineObj = _testHelper.JsonToTypeInstance("InlineObject1", jsonTextObect);
+            var inlineObj = _testHelper.JsonToTypeInstance("InlineObject1", jsonTextObject);
 
             await CallMethod(methodName, new object[] { inlineObj });
         }
 
-        [And("the request should have a body with value \"(.+)\"")]
+        [And("the request should have a body with value (.+)")]
         public async Task CheckRequestBody(string propValue)
         {
             Assert.NotNull(_request);
             var body = await _request.Content.ReadAsStringAsync();
             Assert.NotNull(body);
-            body = body.Replace("\"", "'");
             Assert.Equal(propValue, body);
         }
     }

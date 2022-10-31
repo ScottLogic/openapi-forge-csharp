@@ -14,15 +14,22 @@ namespace Features
         {
         }
 
-        [When(@"calling the method (\w+) with (object|array|parameters) ""(.+)""")]
+        [When(@"calling the method (\w+) with (parameters|array) ""(.+)""")]
         public async Task CallMethodWithStringParameters(string methodName, string paramType, string parametersString)
         {
             var parameters = paramType switch
             {
-                "object" => new object[] { _testHelper.JsonToTypeInstance("InlineObject1", parametersString) },
                 "array" => new object[] { parametersString.Split(",") },
                 _ => parametersString.Split(",")
             };
+
+            await CallMethod(methodName, parameters);
+        }
+
+        [When(@"calling the method (\w+) with object (.+)")]
+        public async Task CallMethodWithStringObject(string methodName, string parametersString)
+        {
+            var parameters = new object[] { _testHelper.JsonToTypeInstance("InlineObject1", parametersString) };
 
             await CallMethod(methodName, parameters);
         }
