@@ -16,14 +16,12 @@ function parse(results) {
   );
 
   if (resultMatch) {
-    result = {
-      scenarios: parseInt(resultMatch[4]),
-      passed: parseInt(resultMatch[2]),
-      skipped: parseInt(resultMatch[3]),
-      undef: 0,
-      failed: parseInt(resultMatch[1]),
-      time: resultMatch[5].replace(" ", ""),
-    };
+    result.scenarios = parseInt(resultMatch[4]);
+    result.passed = parseInt(resultMatch[2]);
+    result.skipped = parseInt(resultMatch[3]);
+    result.undef = 0;
+    result.failed = parseInt(resultMatch[1]);
+    result.time = resultMatch[5].replace(" ", "");
   } else {
     throw new Error(`Could not parse the results of the CSharp testing.`);
   }
