@@ -19,7 +19,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-
+      
+      - name: Set npm shell
+        run: npm config set script-shell "C:\\Program Files\\Git\\bin\\bash.exe"
+      
       - name: Install Node.js dependencies globally
         run: |
           npm install
