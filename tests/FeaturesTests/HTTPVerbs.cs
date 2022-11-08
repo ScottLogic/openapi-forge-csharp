@@ -15,7 +15,7 @@ namespace Features
         {
         }
 
-        [When(@"calling the spied method (\w+) without params")]
+        [When(@"calling the( spied?) method (\w+) without params")]
         public async Task
         CallWithoutParameters(string methodName)
         {
