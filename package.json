@@ -38,7 +38,6 @@
     "eslint": "^8.24.0",
     "handlebars": "^4.7.7",
     "husky": "^8.0.1",
-    "openapi-forge": "latest",
     "path": "^0.12.7",
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.5"
