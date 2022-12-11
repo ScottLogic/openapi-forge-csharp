@@ -10,7 +10,8 @@
   "scripts": {
     "prepare": "husky install",
     "generate-api": "openapi-forge forge ./example/petstore.json . -o ./example",
-    "test": "node test",
+    "test": "dotnet test ./tests/FeaturesTests/FeaturesTests.csproj",
+    "test:generators": "node testGenerators",
     "lint:check:all": "eslint .",
     "lint:write:all": "eslint --fix .",
     "format:check:all": "node format check",
