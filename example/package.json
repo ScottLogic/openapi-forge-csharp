@@ -1,9 +1,0 @@
-{
-  "name": "openapi-forge-csharp-example",
-  "version": "0.1.0",
-  "description": "OpenAPI-Forge CSharp example",
-  "scripts": {
-    "generate-api": "openapi-forge forge ./petstore.json .. -o api",
-    "start": "dotnet run -v q"
-  }
-}
