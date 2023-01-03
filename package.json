@@ -9,14 +9,16 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "generate-api": "openapi-forge forge ./example/petstore.json . -o ./example",
     "test": "dotnet test ./tests/FeaturesTests/FeaturesTests.csproj",
     "test:generators": "node testGenerators",
     "lint:check:all": "eslint .",
     "lint:write:all": "eslint --fix .",
-    "format:check:all": "node format check",
-    "format:write:all": "node format write",
-    "format:write": "echo Automatic formatting is not available for this generator:"
+    "format:check:all": "npm run format:check:csharp && npm run format:check:javascript",
+    "format:check:csharp": "dotnet format ./tests/FeaturesTests/FeaturesTests.csproj --verify-no-changes",
+    "format:check:javascript": "prettier --check .",
+    "format:write:all": "npm run format:write:csharp && npm run format:write:javascript",
+    "format:write:csharp": "dotnet format ./tests/FeaturesTests/FeaturesTests.csproj",
+    "format:write:javascript": "prettier --write ."
   },
   "repository": {
     "type": "git",
