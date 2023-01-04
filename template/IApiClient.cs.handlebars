@@ -2,21 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-{{>namespace info.title}}
+/// <summary>
+/// {{_info.title}}
+/// </summary>
+{{#if info.description}}{{docComment info.description}}{{/if}}
+{{#if info.version}}/// <version>{{info.version}}</version>{{/if}}
+{{>namespace info.title}} {
 
-    // {{info.title}}
     public interface IApiClient{{_tag.name}}
     {
       {{#each paths}}
       {{setVar "path" @key}}
       {{#each this}}
       {{#ifEquals ../../_tag.name _tag.name}}
-        {{#if summary}}// {{summary}}{{/if}}
-        {{#if description}}// {{description}}{{/if}}
-        public Task{{#if _response.schema}}<{{safeTypeConvert _response.schema}}>{{/if}} {{operationId}}({{#each _sortedParameters}}{{nullableTypeConvert schema _optional}} {{toParamName name}}{{#if (hasDefault schema.default)}} = {{{quoteIfString schema.default}}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}});
-        {{#unless @last}}
-        
-        {{/unless}}
+      {{#if summary}}
+      /// <summary>
+      /// {{summary}}
+      /// </summary>
+      {{/if}}
+      {{#if description}}
+      /// {{description}}
+      {{/if}}
+      {{#if tags}}
+      /// <tags>{{tags}}</tags>
+      {{/if}}
+      {{#each _sortedParameters}}
+      /// <param name="{{name}}">{{description}}</param>
+      {{/each}}
+      public Task{{#if _response.schema}}<{{safeTypeConvert _response.schema}}>{{/if}} {{operationId}}(
+        {{~#each _sortedParameters ~}}
+            {{~nullableTypeConvert schema _optional}} {{toParamName name ~}}
+            {{~#if (hasDefault schema.default)}} = {{{quoteIfString schema.default}}}{{/if ~}}
+            {{~#unless @last}}, {{/unless ~}}
+        {{~/each ~}}
+      );
+
       {{/ifEquals}}
       {{/each}}  
       {{/each}}

@@ -47,8 +47,5 @@
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "dependencies": {
-    "shelljs": "^0.8.5"
   }
 }
