@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-{{>namespace info.title}}
+{{>namespace info.title}} {
 
   public class Configuration 
   {
@@ -21,8 +21,8 @@ using System.Text;
         if(!string.IsNullOrWhiteSpace(BasePath))
         {
             sb.Append(BasePath.StartsWith("/") 
-              ? BasePath
-              : $"/{BasePath}");  
+                ? BasePath
+                : $"/{BasePath}");  
         }
 
         return RemoveTrailingSlash(sb).ToString();
@@ -30,9 +30,9 @@ using System.Text;
 
     private static StringBuilder RemoveTrailingSlash(StringBuilder sb)
     {
-      return sb.Length > 0 && sb[sb.Length - 1] == '/'
-        ? sb.Remove(sb.Length - 1, 1)
-        : sb;
+        return sb.Length > 0 && sb[sb.Length - 1] == '/'
+            ? sb.Remove(sb.Length - 1, 1)
+            : sb;
     }
   }
 }

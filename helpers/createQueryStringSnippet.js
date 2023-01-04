@@ -2,6 +2,8 @@ const Handlebars = require("handlebars");
 const toParamName = require("./toParamName");
 const getParametersByType = require("./getParametersByType");
 const newLine = "\n";
+// currently we don't have a working c# code formatter, so we need to use this hack
+const indent = "            ";
 
 const isStringType = (typeDef) =>
   typeDef.type === "string" &&
@@ -18,8 +20,10 @@ const serialiseArrayParam = (param) => {
     param.name
   }={${isStringArrayParam(param) ? "HttpUtility.UrlEncode(p)" : "p"}}"))}`;
 
-  return `if(${safeParamName} != null && ${safeParamName}.Length > 0)
-{ ${prefixSerialisedQueryParam(serialisedParam)} }`;
+  return `${indent}if (${safeParamName} != null && ${safeParamName}.Length > 0)
+${indent}{
+    ${prefixSerialisedQueryParam(serialisedParam)}
+${indent}}`;
 };
 
 const serialiseObjectParam = (param) => {
@@ -33,8 +37,10 @@ const serialiseObjectParam = (param) => {
     serialisedObject += serialisedParam + "&";
   }
 
-  return `if(${safeParamName} != null)
-{ ${prefixSerialisedQueryParam(serialisedObject.slice(0, -1))} }`;
+  return `${indent}if (${safeParamName} != null)
+${indent}{
+    ${prefixSerialisedQueryParam(serialisedObject.slice(0, -1))}
+${indent}}`;
 };
 
 const serialisePrimitive = (param) => {
@@ -47,13 +53,15 @@ const serialisePrimitive = (param) => {
     `${param.name}={${escaped}}`
   );
   return param._optional
-    ? `if(${safeParamName} != null)
-{ ${serialisedParam} }`
+    ? `${indent}if (${safeParamName} != null)
+${indent}{
+    ${serialisedParam}
+${indent}}`
     : serialisedParam;
 };
 
 const prefixSerialisedQueryParam = (serialisedQueryParam) =>
-  `queryString.Append($"{(queryString.Length == 0 ? "?" : "&")}${serialisedQueryParam}");`;
+  `${indent}queryString.Append($"{(queryString.Length == 0 ? "?" : "&")}${serialisedQueryParam}");`;
 
 const createQueryStringSnippet = (params) => {
   const queryParams = getParametersByType(params, "query");

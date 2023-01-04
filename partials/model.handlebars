@@ -1,20 +1,23 @@
     {{#if description}}
     /**
-    * {{description}}
+    * <summary>{{description}}</summary>
     */
     {{/if}}
     public class {{toClassName @key}} 
     {
       {{#each properties}}
+
         {{#if description}}
-        // {{description}}
+        /// <value>
+        /// {{description}}
+        /// <value>
         {{/if}}
         {{#if example}}
-        // e.g. {{example}}
+        /// <example>
+        /// {{example}}
+        /// <example>
         {{/if}}
         public {{nullableTypeConvert this}} {{@key}} { get; set; }
-{{#unless @last}}
-
-{{/unless}}
       {{/each}}
     }
+    

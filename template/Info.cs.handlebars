@@ -2,22 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-{{>namespace info.title}}
+{{>namespace info.title}} {
 
   public static class Info 
   {
     {{#each _info}}
-    public static {{#if (isObj this) }}{{capitalizeFirst @key}}{{else}}String{{/if}} {{capitalizeFirst @key}} { get;set; }=  
+    public static {{#if (isObj this) }}{{capitalizeFirst @key}}{{else}}String{{/if}} {{capitalizeFirst @key}} { get; set; } =  
     {{#if (isObj this) }}
-      new {{capitalizeFirst @key}} {
+        new {{capitalizeFirst @key}} {
     {{#each this}}
-        {{capitalizeFirst @key}}= "{{this}}",
+            {{capitalizeFirst @key}}= "{{this}}",
     {{/each}}
-      };
+        };
 
     {{else}}
-      "{{this}}";
-
+        "{{this}}";
     {{/if}}
     {{/each}}
   }
@@ -26,10 +25,11 @@ using System.Text;
   {{#if (isObj this) }}
   public class {{capitalizeFirst @key}}
   {
-    {{#each this}}
-    public String {{capitalizeFirst @key}} {get;set;}
-    {{/each}}
+      {{#each this}}
+      public String {{capitalizeFirst @key}} {get; set;}
+      {{/each}}
   }
+  
   {{/if}}
   {{/each}}
 }
