@@ -16,23 +16,9 @@ using System.Text;
 
     public virtual string GetBaseAddress()
     {    
-        var sb = RemoveTrailingSlash(new StringBuilder(Servers[SelectedServerIndex]));
-
-        if(!string.IsNullOrWhiteSpace(BasePath))
-        {
-            sb.Append(BasePath.StartsWith("/") 
-                ? BasePath
-                : $"/{BasePath}");  
-        }
-
-        return RemoveTrailingSlash(sb).ToString();
-    }
-
-    private static StringBuilder RemoveTrailingSlash(StringBuilder sb)
-    {
-        return sb.Length > 0 && sb[sb.Length - 1] == '/'
-            ? sb.Remove(sb.Length - 1, 1)
-            : sb;
+        var sb = new StringBuilder(BasePath);
+        sb.Append(Servers[SelectedServerIndex]);
+        return sb.ToString();
     }
   }
 }
