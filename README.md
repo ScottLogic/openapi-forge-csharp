@@ -17,7 +17,18 @@ $ openapi-forge forge
  \ -o api
 ```
 
-This generates an API from the Pet Store swagger definition, using the generator within the current folder (`.`), outputting the results to the `api` folder.
+This generates an API from the Pet Store swagger definition, using the generator within the current folder (`.`), outputting the results to the `api` folder.  
+Once generated, register the clients with an [IServiceCollection](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection) like so:
+
+```
+var services = new ServiceCollection();
+// alternatively if you have a WebAppBuilder use its Services property e.g.
+// WebApplication.CreateBuilder().Services;
+services.Add(new ServiceDescriptor(typeof(OpenApiForge.Configuration), typeof(OpenApiForge.Configuration), ServiceLifetime.Scoped));
+OpenApiForge.Startup.RegisterApiClient(services, new OpenApiForge.Configuration());
+```
+
+Now any client can be requested as constructor dependency.
 
 ### Testing
 
