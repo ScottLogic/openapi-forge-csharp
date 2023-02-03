@@ -15,7 +15,7 @@ using System.Web;
 /// </summary>
 {{#if info.description}}{{docComment info.description}}{{/if}}
 {{#if info.version}}/// <version>{{info.version}}</version>{{/if}}
-{{>namespace info.title}} {
+{{>namespace}} {
     
     public class ApiClient{{_tag.name}}  : IApiClient{{_tag.name}}
     {
