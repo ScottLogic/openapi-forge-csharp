@@ -49,7 +49,7 @@ using System.Web;
         {{#each _sortedParameters}}
         /// <param name="{{name}}">{{description}}</param>
         {{/each}}
-        public async Task{{#if _response.schema}}<{{safeTypeConvert _response.schema}}>{{/if}} {{operationId}}(
+        public async Task<HttpResponse<{{#if _response.schema}}{{safeTypeConvert _response.schema}}{{else}}object{{/if}}>> {{operationId}}(
           {{~#each _sortedParameters ~}}
             {{~nullableTypeConvert schema _optional}} {{toParamName name ~}}
             {{~#if (hasDefault schema.default)}} = {{{quoteIfString schema.default}}}{{/if ~}}
@@ -72,11 +72,15 @@ using System.Web;
             response.EnsureSuccessStatusCode();
             {{#if _response.schema}}
             var responseBody = await response.Content.ReadAsStringAsync();
-            {{createReturnStatement _response.schema}}
+            return new HttpResponse<{{safeTypeConvert _response.schema}}>() {
+              Data = {{createReturnStatement _response.schema}}
+            };
+            {{else}}
+            return new HttpResponse<object>() { };
             {{/if}}
         }
         {{else}}
-        public Task{{#if _response.schema}}<{{safeTypeConvert _response.schema}}>{{/if}} {{operationId}}({{#each _sortedParameters}}{{nullableTypeConvert schema _optional}} {{name}}{{#if schema.default}} = {{{quoteIfString schema.default}}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}})
+        public Task{{#if _response.schema}}<HttpResponse<{{safeTypeConvert _response.schema}}>>{{/if}} {{operationId}}({{#each _sortedParameters}}{{nullableTypeConvert schema _optional}} {{name}}{{#if schema.default}} = {{{quoteIfString schema.default}}}{{/if}}{{#unless @last}}, {{/unless}}{{/each}})
         {
             throw new NotImplementedException("Operation '{{operationId}}' most likely does not support json encoded requests which are not supported by openapi forge.");
         }        

@@ -12,8 +12,15 @@ namespace Features
     {
         private readonly Dictionary<string, string> _responses = new Dictionary<string, string>();
 
+        protected dynamic _extractedResponse;
+
         public Response(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
+        }
+
+        public void Dispose()
+        {
+            _extractedResponse = null;
         }
 
         [When(@"calling the method (\w+) and the server responds with")]
@@ -42,17 +49,19 @@ namespace Features
         }
 
         [Then(@"the response should be of type (\w+)")]
-        public void CheckResponseType(string type)
+        public void CheckResponseType(string expected)
         {
-            Assert.EndsWith(type, _actual.GetType().Name);
+            var type = _extractedResponse != null ? _extractedResponse.GetType() : _actual.Data.GetType();
+            Assert.EndsWith(expected, type.Name);
         }
 
         [And(@"the response should have a property (id|value) with value (.+)")]
         public void CheckResponseIdProperty(string propName, string propValue)
         {
-            var propInfo = _actual.GetType().GetProperty(propName);
+            var property = _extractedResponse != null ? _extractedResponse : _actual.Data;
+            var propInfo = property.GetType().GetProperty(propName);
             Assert.NotNull(propInfo);
-            Assert.Equal(propValue, propInfo.GetValue(_actual).ToString());
+            Assert.Equal(propValue, propInfo.GetValue(property).ToString());
         }
 
         [When(@"calling the method (\w+) with parameters (.+)")]
@@ -72,21 +81,21 @@ namespace Features
         [And(@"the response should have a property (date|dateTime) with value ([\d-:.TZ]+)")]
         public void CheckDateValueProperty(string propertyName, string expectedPropValue)
         {
-            var propInfo = _actual.GetType().GetProperty(propertyName);
+            var propInfo = _actual.Data.GetType().GetProperty(propertyName);
             Assert.NotNull(propInfo);
-            Assert.Equal(DateTime.Parse(expectedPropValue).ToUniversalTime(), propInfo.GetValue(_actual));
+            Assert.Equal(DateTime.Parse(expectedPropValue).ToUniversalTime(), propInfo.GetValue(_actual.Data));
         }
 
         [And(@"the response should be equal to (""[\w\s]+"")")]
         public void CheckStringResponseValue(string expectedResponse)
         {
-            Assert.Equal(expectedResponse, _actual);
+            Assert.Equal(expectedResponse, _actual.Data);
         }
 
         [Then(@"the response should be an array")]
         public void CheckArrayResponseType()
         {
-            Assert.True(_actual.GetType().IsArray);
+            Assert.True(_actual.Data.GetType().IsArray);
         }
 
         [When(@"calling the method (\w+) and the server provides an empty response")]
@@ -98,20 +107,20 @@ namespace Features
         [Then(@"the response should be null")]
         public void ThenResponseTypeIsTask()
         {
-            Assert.Null(_actual);
+            Assert.Null(_actual.Data);
         }
 
         [When(@"extracting the object at index (\d)")]
         public void CheckArrayResponseType(string index)
         {
-            _actual = ((object[])_actual)[int.Parse(index)];
+            _extractedResponse = ((object[])_actual.Data)[int.Parse(index)];
         }
 
         [Then(@"the response should have a property (cats) with value (\d+)")]
         [And(@"the response should have a property (dogs) with value (\d+)")]
         public void CheckResponseIntDictionaryProperties(string propertyName, string expectedPropValue)
         {
-            var actual = _actual as Dictionary<string, int>;
+            var actual = _actual.Data as Dictionary<string, int>;
             Assert.NotNull(actual);
             Assert.Equal(int.Parse(expectedPropValue), actual[propertyName]);
         }
@@ -120,7 +129,7 @@ namespace Features
         [And(@"the response should have a property (dateTwo) with value ([\d-:.TZ]+)")]
         public void CheckResponseDateDictionaryProperties(string propertyName, string expectedPropValue)
         {
-            var actual = _actual as Dictionary<string, DateTime>;
+            var actual = _actual.Data as Dictionary<string, DateTime>;
             Assert.NotNull(actual);
             Assert.Equal(DateTime.Parse(expectedPropValue).ToUniversalTime(), actual[propertyName]);
         }

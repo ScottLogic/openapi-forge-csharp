@@ -23,15 +23,15 @@ namespace Features
         [Then(@"the response should be of type (\w+)")]
         public void CheckResponseType(string type)
         {
-            Assert.EndsWith(type, _actual.GetType().Name);
+            Assert.EndsWith(type, _actual.Data.GetType().Name);
         }
 
         [And(@"the response should have a property (id|value) with value (.+)")]
         public void CheckResponseIdProperty(string propName, string propValue)
         {
-            var propInfo = _actual.GetType().GetProperty(propName);
+            var propInfo = _actual.Data.GetType().GetProperty(propName);
             Assert.NotNull(propInfo);
-            Assert.Equal(propValue, propInfo.GetValue(_actual).ToString());
+            Assert.Equal(propValue, propInfo.GetValue(_actual.Data).ToString());
         }
 
         [When(@"calling the method (\w+) with (?:object|array|parameters) (.+)")]

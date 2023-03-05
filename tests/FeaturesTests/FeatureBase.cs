@@ -19,7 +19,7 @@ namespace Features
 
         protected readonly string _testId;
 
-        protected object _actual;
+        protected dynamic _actual;
 
         protected string _docStringContent;
 
@@ -46,7 +46,7 @@ namespace Features
         public void CheckRequestUri(string url)
         {
             var expected = new Uri(url);
-            var actual = new Uri(_actual.ToString());
+            var actual = new Uri(_actual.Data.ToString());
             Assert.Equal(expected.Host, actual.Host);
             Assert.Equal(expected.AbsolutePath, actual.AbsolutePath);
             var separators = new[] { '?', '&' };
