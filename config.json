@@ -1,0 +1,6 @@
+{
+  "namespace": {
+    "default": "OpenApiForge",
+    "description": "The namespace for the generated classes."
+  }
+}

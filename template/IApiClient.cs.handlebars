@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 /// </summary>
 {{#if info.description}}{{docComment info.description}}{{/if}}
 {{#if info.version}}/// <version>{{info.version}}</version>{{/if}}
-{{>namespace info.title}} {
+{{>namespace}} {
 
     public interface IApiClient{{_tag.name}}
     {
