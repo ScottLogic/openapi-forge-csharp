@@ -4,31 +4,88 @@ This repository is the C# generator for the [OpenAPI Forge](https://github.com/S
 
 https://github.com/ScottLogic/openapi-forge
 
-## Development
+## Example
 
-### Running
+You should consult the [OpenAPI Forge](https://github.com/ScottLogic/openapi-forge) repository for a complete user guide. The following is a very brief example that quickly gets you up-and-running with this generator.
 
-To run this generator, you also need to have [OpenAPI Forge] installed, or the repository checked out. Assuming you have it installed as a global module, you can run this generator as follows:
-
-```
-$ openapi-forge forge
- \ https://petstore3.swagger.io/api/v3/openapi.json
- \ .
- \ -o api
-```
-
-This generates an API from the Pet Store swagger definition, using the generator within the current folder (`.`), outputting the results to the `api` folder.  
-Once generated, register the clients with an [IServiceCollection](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection) like so:
+Run the `forge` command to generate a client API using this generator as follows:
 
 ```
+$ openapi-forge forge \
+                https://petstore3.swagger.io/api/v3/openapi.json \
+                openapi-forge-csharp \
+                -o ApiTest
+```
+
+This will generate various files in the `api` folder.
+
+### Running the example output
+
+The following provides a brief set of instructions for running the pet store example using the dotnet CLI.
+
+First generate a new console application:
+
+```shell
+$ dotnet new console -o ApiTest -f net7.0
+```
+
+Generate the pet store API client within the same folder:
+
+```shell
+$ openapi-forge forge \
+                https://petstore3.swagger.io/api/v3/openapi.json \
+                openapi-forge-csharp \
+                -o ApiTest
+```
+
+Within the `ApiTest` folder you'll find a generated `ApiTest.csproj` file. Add the following assembly references:
+
+```xml
+<ItemGroup>
+  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+  <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+</ItemGroup>
+```
+
+Finally update `Programe.cs` to the following:
+
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using OpenApiForge;
+
+// perform any required configuration for accessing the API here
+var config = new Configuration() {
+  BasePath = "https://petstore3.swagger.io"
+};
+
+// register the API client with the DI container
 var services = new ServiceCollection();
-// alternatively if you have a WebAppBuilder use its Services property e.g.
-// WebApplication.CreateBuilder().Services;
-services.Add(new ServiceDescriptor(typeof(OpenApiForge.Configuration), typeof(OpenApiForge.Configuration), ServiceLifetime.Scoped));
-OpenApiForge.Startup.RegisterApiClient(services, new OpenApiForge.Configuration());
+services.Add(new ServiceDescriptor(typeof(Configuration), config));
+Startup.RegisterApiClient(services, config);
+
+// get the API client from the DI container
+var serviceProvider = services.BuildServiceProvider();
+var api = serviceProvider.GetRequiredService<IApiClientPet>();
+
+// add a pet
+await api.addPet(new Pet() {
+  id = 1,
+  name = "Fido",
+  photoUrls= new string[0],
+});
+
+// fetch the pet
+var result = await api.getPetById(1);
+Console.WriteLine(result.name);
 ```
 
-Now any client can be requested as constructor dependency.
+Run from the terminal as follows:
+
+```shell
+$ dotnet run
+Fido
+```
 
 ### Testing
 
