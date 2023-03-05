@@ -20,7 +20,7 @@ const createReturnStatement = (responseSchema) => {
       returnStatement = `JsonSerializer.Deserialize<${responseType}>(responseBody)`;
   }
 
-  return new Handlebars.SafeString(`return ${returnStatement};`);
+  return new Handlebars.SafeString(returnStatement);
 };
 
 module.exports = createReturnStatement;
