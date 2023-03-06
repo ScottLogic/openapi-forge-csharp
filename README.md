@@ -77,7 +77,7 @@ await api.addPet(new Pet() {
 
 // fetch the pet
 var result = await api.getPetById(1);
-Console.WriteLine(result.name);
+Console.WriteLine(result.Data.name);
 ```
 
 Run from the terminal as follows:
