@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using Gherkin.Ast;
 using RichardSzalay.MockHttp;
 using Xunit;
@@ -104,6 +105,37 @@ namespace Features
             await CallMethod(methodName);
         }
 
+        [When(@"calling the method (\w+) and the server responds with headers")]
+        public async Task WhenEmptyResponse(string methodName, DocString headers)
+        {
+            _responses[methodName.Replace("Response", string.Empty)] = "";
+
+            // we'll assume a single header for now
+            var header = headers.Content.Split(":");
+            var headerName = Regex.Match(header[0], "\"(.*)\"").Groups[1].Value;
+            var headerValue = Regex.Match(header[1], "\"(.*)\"").Groups[1].Value;
+
+            _mockHttp.When("*").Respond((HttpRequestMessage request) =>
+            {
+                var message = new HttpResponseMessage
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Content = new StringContent(_responses[request.RequestUri.LocalPath.Split("/").Last()]),
+                };
+                message.Headers.Add(headerName, headerValue);
+                return Task.FromResult<HttpResponseMessage>(message);
+            });
+
+            var request = _mockHttp.When("*").Respond("application/json", "");
+            var apiClient = _testHelper.CreateApiClient(_mockHttp.ToHttpClient());
+
+            var methodInfo = apiClient.GetType().GetMethod(methodName);
+
+            dynamic awaitable = methodInfo.Invoke(apiClient, null);
+            await awaitable;
+            _actual = awaitable.GetAwaiter().GetResult();
+        }
+
         [Then(@"the response should be null")]
         public void ThenResponseTypeIsTask()
         {
@@ -123,6 +155,13 @@ namespace Features
             var actual = _actual.Data as Dictionary<string, int>;
             Assert.NotNull(actual);
             Assert.Equal(int.Parse(expectedPropValue), actual[propertyName]);
+        }
+
+        [Then(@"the response should have a header (.+) with value (.+)")]
+        [And(@"the response should have a header (.+) with value (.+)")]
+        public void CheckResponseHeaderProperty(string propertyName, string expectedPropValue)
+        {
+            Assert.Equal(expectedPropValue, _actual.Headers.GetValues(propertyName)[0]);
         }
 
         [Then(@"the response should have a property (dateOne) with value ([\d-:.TZ]+)")]
