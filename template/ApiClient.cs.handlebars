@@ -72,11 +72,17 @@ using System.Web;
             response.EnsureSuccessStatusCode();
             {{#if _response.schema}}
             var responseBody = await response.Content.ReadAsStringAsync();
-            return new HttpResponse<{{safeTypeConvert _response.schema}}>() {
-              Data = {{createReturnStatement _response.schema}}
-            };
+            return new HttpResponse<{{safeTypeConvert _response.schema}}>(
+              {{createReturnStatement _response.schema}},
+              response.StatusCode,
+              response.Headers
+            );
             {{else}}
-            return new HttpResponse<object>() { };
+            return new HttpResponse<object>(
+              null,
+              response.StatusCode,
+              response.Headers
+            );
             {{/if}}
         }
         {{else}}

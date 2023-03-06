@@ -1,5 +1,30 @@
+using System.Net;
+using System.Net.Http.Headers;
+
 {{>namespace}} {
+  /// <summary>
+  /// Represents an HTTP response.
+  /// </summary>
   public class HttpResponse<T> {
-    public T Data { get; set; }
+    public HttpResponse(T data, HttpStatusCode statusCode, HttpResponseHeaders headers) {
+      Data = data;
+      StatusCode = statusCode;
+      Headers = headers;
+    }
+
+    /// <summary>
+    /// Gets the typed response.
+    /// </summary>
+    public T Data { get; private set; }
+
+    /// <summary>
+    /// Gets the HTTP status code.
+    /// </summary>
+    public HttpStatusCode StatusCode { get; private set; }
+
+    /// <summary>
+    /// Gets the returned HTTP headers.
+    /// </summary>
+    public HttpResponseHeaders Headers { get; private set; }
   }
 }
