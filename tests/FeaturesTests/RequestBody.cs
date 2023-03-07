@@ -14,7 +14,6 @@ namespace Features
         {
         }
 
-
         [When(@"calling the method (\w+) with (?:object|array|parameters) (.+)")]
         public async Task CallMethodWithStringParameters(string methodName, string parametersString)
         {

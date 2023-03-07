@@ -24,31 +24,6 @@ namespace Features
             _extractedResponse = null;
         }
 
-        [When(@"calling the method (\w+) and the server responds with")]
-        public async Task CallWithResponse(string methodName, DocString response)
-        {
-            _responses[methodName.Replace("Response", string.Empty)] = response.Content;
-
-            _mockHttp.When("*").Respond((HttpRequestMessage request) =>
-            {
-                return Task.FromResult<HttpResponseMessage>(
-                    new HttpResponseMessage
-                    {
-                        StatusCode = System.Net.HttpStatusCode.OK,
-                        Content = new StringContent(_responses[request.RequestUri.LocalPath.Split("/").Last()])
-                    });
-            });
-
-            var request = _mockHttp.When("*").Respond("application/json", response.Content);
-            var apiClient = _testHelper.CreateApiClient(_mockHttp.ToHttpClient());
-
-            var methodInfo = apiClient.GetType().GetMethod(methodName);
-
-            dynamic awaitable = methodInfo.Invoke(apiClient, null);
-            await awaitable;
-            _actual = awaitable.GetAwaiter().GetResult();
-        }
-
         [Then(@"the response should be of type (\w+)")]
         public void CheckResponseType(string expected)
         {
