@@ -13,6 +13,10 @@ namespace Features
     {
         protected readonly ITestOutputHelper _testOutputHelper;
 
+        private int? _serverIndex;
+
+        private readonly Dictionary<string, string> _responses = new Dictionary<string, string>();
+
         protected readonly TestHelper _testHelper;
 
         protected readonly MockHttpMessageHandler _mockHttp;
@@ -31,6 +35,80 @@ namespace Features
             _testOutputHelper = testOutputHelper;
             _testHelper = new TestHelper(_testId);
             _mockHttp = new MockHttpMessageHandler();
+        }
+
+        [When(@"calling the method (\w+) and the server responds with")]
+        public async Task CallWithResponse(string methodName, DocString response)
+        {
+            _responses[methodName.Replace("Response", string.Empty)] = response.Content;
+
+            _mockHttp.When("*").Respond((HttpRequestMessage request) =>
+            {
+                return Task.FromResult<HttpResponseMessage>(
+                    new HttpResponseMessage
+                    {
+                        StatusCode = System.Net.HttpStatusCode.OK,
+                        Content = new StringContent(_responses[request.RequestUri.LocalPath.Split("/").Last()])
+                    });
+            });
+
+            var request = _mockHttp.When("*").Respond("application/json", response.Content);
+            var apiClient = _testHelper.CreateApiClient(_mockHttp.ToHttpClient());
+
+            var methodInfo = apiClient.GetType().GetMethod(methodName);
+
+            dynamic awaitable = methodInfo.Invoke(apiClient, null);
+            await awaitable;
+            _actual = awaitable.GetAwaiter().GetResult();
+        }
+
+        [Then(@"the response should be of type (\w+)")]
+        public void CheckResponseType(string type)
+        {
+            Assert.EndsWith(type, _actual.Data.GetType().Name);
+        }
+
+        [When(@"calling the method (\w+) without params")]
+        public async Task CallWithoutParameters(string methodName)
+        {
+            await CallMethod(methodName, null, null, _serverIndex);
+        }
+
+        [When(@"calling the method (\w+) with object (.+)")]
+        public async Task CallMethodWithStringObject(string methodName, string parametersString)
+        {
+            var parameters = new object[] { _testHelper.JsonToTypeInstance("InlineObject1", parametersString) };
+
+            await CallMethod(methodName, parameters);
+        }
+
+        [When(@"calling the method (\w+) with (object|array|parameters) ""(.+)""")]
+        public async Task CallMethodWithStringParameters(string methodName, string paramType, string parametersString)
+        {
+            var parameters = paramType switch
+            {
+                "object" => new object[] { _testHelper.JsonToTypeInstance("InlineObject1", parametersString) },
+                "array" => new object[] { parametersString.Split(",") },
+                _ => parametersString.Split(",")
+            };
+
+            await CallMethod(methodName, parameters);
+        }
+
+        [When(@"selecting the server at index (\d)")]
+        public void SelectedServerIndexIsOne(string serverIndex)
+        {
+            _serverIndex = new Nullable<int>(int.Parse(serverIndex));
+        }
+
+
+        [Then(@"the response should have a property (.+) with value (.+)")]
+        [And(@"the response should have a property (.+) with value (.+)")]
+        public void CheckResponseIdProperty(string propName, string propValue)
+        {
+            var propInfo = _actual.Data.GetType().GetProperty(propName);
+            Assert.NotNull(propInfo);
+            Assert.Equal(propValue, propInfo.GetValue(_actual.Data).ToString());
         }
 
         [Given(@"an API with the following specification")]
