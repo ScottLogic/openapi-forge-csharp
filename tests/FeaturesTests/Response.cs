@@ -59,7 +59,17 @@ namespace Features
         {
             var propInfo = _actual.Data.GetType().GetProperty(propertyName);
             Assert.NotNull(propInfo);
-            Assert.Equal(DateTime.Parse(expectedPropValue).ToUniversalTime(), propInfo.GetValue(_actual.Data));
+            Assert.IsType<DateTime>(propInfo.GetValue(_actual.Data));
+            // Currently, we use DateTime type representation for both date and date-time.
+            // Until this behaviour changes, differentiate them on expected value and convert to DateOnly if necessary. 
+            if (expectedPropValue.Contains("T"))
+            {
+                Assert.Equal(DateTime.Parse(expectedPropValue).ToUniversalTime(), propInfo.GetValue(_actual.Data));
+            }
+            else
+            {
+                Assert.Equal(DateOnly.Parse(expectedPropValue), DateOnly.FromDateTime(propInfo.GetValue(_actual.Data)));
+            }
         }
 
         [And(@"the response should be equal to (""[\w\s]+"")")]
@@ -145,7 +155,9 @@ namespace Features
         {
             var actual = _actual.Data as Dictionary<string, DateTime>;
             Assert.NotNull(actual);
-            Assert.Equal(DateTime.Parse(expectedPropValue).ToUniversalTime(), actual[propertyName]);
+            // Currently, we use DateTime type representation for both date and date-time.
+            // Until this behaviour changes, differentiate them on expected value and convert to DateOnly if necessary. 
+            Assert.Equal(DateOnly.Parse(expectedPropValue), DateOnly.FromDateTime(actual[propertyName]));
         }
     }
 }
